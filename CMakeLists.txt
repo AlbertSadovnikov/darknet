@@ -14,7 +14,7 @@ option(WITH_OPENMP "with openmp" ON)
 if(WITH_CUDA)
     find_package(CUDA REQUIRED)
     add_definitions(-DGPU)
-    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -w -Xcompiler -fPIC -gencode arch=compute_61,code=sm_61" )
+    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -w -Xcompiler -fPIC -gencode arch=compute_61,code=sm_61")
     include_directories(${CUDA_INCLUDE_DIRS})
     if(WITH_CUDNN)
         include(${CMAKE_CURRENT_LIST_DIR}/cmake/FindCuDNN.cmake)
@@ -38,56 +38,56 @@ if(WITH_OPENMP)
     endif()
 endif()
 
-
 find_library(MLib m REQUIRED)
 find_package(Threads REQUIRED)
 
 include_directories(include)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-add_definitions(-Ofast)
 
 file(GLOB DN_LIBRARY_SOURCES "src/*.c")
 
 add_library(objdarknet OBJECT ${DN_LIBRARY_SOURCES})
 
-
-if(CUDA_FOUND)
+if(WITH_CUDA)
     file(GLOB DN_CUDA_LIBRARY_SOURCES "src/*.cu")
     CUDA_COMPILE(CUDA_OBJ ${DN_CUDA_LIBRARY_SOURCES})
 endif()
 
 if(BUILD_SHARED_LIB)
-    add_library(darknet_shared SHARED $<TARGET_OBJECTS:objdarknet>)
+    add_library(darknet_shared SHARED $<TARGET_OBJECTS:objdarknet> ${CUDA_OBJ})
+    target_link_libraries(darknet_shared ${MLib})
     set_target_properties(darknet_shared PROPERTIES OUTPUT_NAME darknet CLEAN_DIRECT_OUTPUT ON)
 endif()
 
 if(BUILD_STATIC_LIB)
-    add_library(darknet_static STATIC $<TARGET_OBJECTS:objdarknet>)
+    add_library(darknet_static STATIC $<TARGET_OBJECTS:objdarknet> ${CUDA_OBJ})
+    target_link_libraries(darknet_static ${MLib})
     set_target_properties(darknet_static PROPERTIES OUTPUT_NAME darknet CLEAN_DIRECT_OUTPUT ON)
 endif()
 
 if(BUILD_EXECUTABLE)
     file(GLOB DN_EXAMPLE_SOURCES "examples/*.c")
-    add_executable(darknet ${OpenCV_INCLUDE_DIRS} ${DN_EXAMPLE_SOURCES} $<TARGET_OBJECTS:objdarknet> ${CUDA_OBJ})
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        if(WITH_OPENCV)
+            # fixes missing reference from opencv
+            list(APPEND DN_EXAMPLE_SOURCES "${CMAKE_CURRENT_LIST_DIR}/fix/cvRound.c")
+            message(${DN_EXAMPLE_SOURCES})
+        endif()
+    endif()
+
+    add_executable(darknet
+            ${OpenCV_INCLUDE_DIRS}
+            ${DN_EXAMPLE_SOURCES}
+            $<TARGET_OBJECTS:objdarknet>
+            ${CUDA_OBJ})
     target_link_libraries(darknet
-            ${MLib}
             ${CMAKE_THREAD_LIBS_INIT}
             ${OpenCV_LIBS}
             ${CUDA_LIBRARIES}
             -lstdc++
             ${CUDNN_LIBRARY}
+            ${MLib}
             ${CUDA_CUBLAS_LIBRARIES}
             ${CUDA_curand_LIBRARY})
 endif()
-
-
-#include_directories(include)
-#
-#
-#file(GLOB DN_EXEC_SOURCES "examples/*.c")
-#file(GLOB DN_CUDA_SOURCES "src/*.cu")
-#set(SOURCE_FILES ${DN_LIBRARY_SOURCES} ${DN_EXEC_SOURCES})
-#
-#add_executable(darknet ${SOURCE_FILES})
-#target_link_libraries(darknet ${M_LIB} ${CMAKE_THREAD_LIBS_INIT})
