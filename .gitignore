@@ -5,6 +5,7 @@
 *.png
 *.jpg
 *.pyc
+build/
 old/
 mnist/
 data/
@@ -18,7 +19,8 @@ submission/
 cfg/
 darknet
 .fuse*
-
+.idea/
+cmake-*/
 # OS Generated #
 .DS_Store*
 ehthumbs.db
