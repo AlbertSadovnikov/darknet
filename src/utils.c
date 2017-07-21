@@ -40,7 +40,7 @@ int *read_intlist(char *gpu_list, int *ngpus, int d)
     return gpus;
 }
 
-int *read_map(char *filename)
+int *read_map(const char *filename)
 {
     int n = 0;
     int *map = 0;
@@ -231,7 +231,7 @@ void malloc_error()
     exit(-1);
 }
 
-void file_error(char *s)
+void file_error(const char *s)
 {
     fprintf(stderr, "Couldn't open file: %s\n", s);
     exit(0);

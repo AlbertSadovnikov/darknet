@@ -37,7 +37,7 @@ metadata get_metadata(char *file)
     metadata m = {0};
     list *options = read_data_cfg(file);
 
-    char *name_list = option_find_str(options, "names", 0);
+    const char *name_list = option_find_str(options, "names", 0);
     if(!name_list) name_list = option_find_str(options, "labels", 0);
     if(!name_list) {
         fprintf(stderr, "No names or labels found\n");
@@ -88,7 +88,7 @@ void option_unused(list *l)
     }
 }
 
-char *option_find(list *l, char *key)
+const char *option_find(list *l, const char *key)
 {
     node *n = l->front;
     while(n){
@@ -101,9 +101,9 @@ char *option_find(list *l, char *key)
     }
     return 0;
 }
-char *option_find_str(list *l, char *key, char *def)
+const char *option_find_str(list *l, const char *key, const char *def)
 {
-    char *v = option_find(l, key);
+    const char *v = option_find(l, key);
     if(v) return v;
     if(def) fprintf(stderr, "%s: Using default '%s'\n", key, def);
     return def;
@@ -111,7 +111,7 @@ char *option_find_str(list *l, char *key, char *def)
 
 int option_find_int(list *l, char *key, int def)
 {
-    char *v = option_find(l, key);
+    const char *v = option_find(l, key);
     if(v) return atoi(v);
     fprintf(stderr, "%s: Using default '%d'\n", key, def);
     return def;
@@ -119,21 +119,21 @@ int option_find_int(list *l, char *key, int def)
 
 int option_find_int_quiet(list *l, char *key, int def)
 {
-    char *v = option_find(l, key);
+    const char *v = option_find(l, key);
     if(v) return atoi(v);
     return def;
 }
 
 float option_find_float_quiet(list *l, char *key, float def)
 {
-    char *v = option_find(l, key);
+    const char *v = option_find(l, key);
     if(v) return atof(v);
     return def;
 }
 
 float option_find_float(list *l, char *key, float def)
 {
-    char *v = option_find(l, key);
+    const char *v = option_find(l, key);
     if(v) return atof(v);
     fprintf(stderr, "%s: Using default '%lf'\n", key, def);
     return def;

@@ -385,7 +385,7 @@ void get_region_boxes(layer l, int w, int h, int netw, int neth, float thresh, f
             }
         }
         for(i = 0; i < l.outputs; ++i){
-            l.output[i] = (l.output[i] + flip[i])/2.;
+            l.output[i] = (l.output[i] + flip[i])/2.f;
         }
     }
     for (i = 0; i < l.w*l.h; ++i){

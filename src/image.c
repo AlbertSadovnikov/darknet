@@ -4,7 +4,9 @@
 #include "cuda.h"
 #include <stdio.h>
 #include <math.h>
-
+#ifdef OPENCV
+#include <opencv2/imgcodecs/imgcodecs_c.h>
+#endif
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -509,10 +511,10 @@ void ipl_into_image(IplImage* src, image im)
     int step = src->widthStep;
     int i, j, k;
 
-    for(i = 0; i < h; ++i){
-        for(k= 0; k < c; ++k){
-            for(j = 0; j < w; ++j){
-                im.data[k*w*h + i*w + j] = data[i*step + j*c + k]/255.;
+    for(i = 0; i < h; ++i) {
+        for(k= 0; k < c; ++k) {
+            for(j = 0; j < w; ++j) {
+                im.data[k*w*h + i*w + j] = data[i*step + j*c + k] / 255.f;
             }
         }
     }
@@ -528,7 +530,7 @@ image ipl_to_image(IplImage* src)
     return out;
 }
 
-image load_image_cv(char *filename, int channels)
+image load_image_cv(const char *filename, int channels)
 {
     IplImage* src = 0;
     int flag = -1;
@@ -1389,7 +1391,7 @@ image load_image_stb(char *filename, int channels)
     return im;
 }
 
-image load_image(char *filename, int w, int h, int c)
+image load_image(const char *filename, int w, int h, int c)
 {
 #ifdef OPENCV
     image out = load_image_cv(filename, c);
@@ -1405,7 +1407,7 @@ image load_image(char *filename, int w, int h, int c)
     return out;
 }
 
-image load_image_color(char *filename, int w, int h)
+image load_image_color(const char *filename, int w, int h)
 {
     return load_image(filename, w, h, 3);
 }

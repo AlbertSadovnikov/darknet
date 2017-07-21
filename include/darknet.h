@@ -638,7 +638,7 @@ image *get_weights(layer l);
 void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, char **names, int classes, int frame_skip, char *prefix, int avg, float hier_thresh, int w, int h, int fps, int fullscreen);
 void get_detection_boxes(layer l, int w, int h, float thresh, float **probs, box *boxes, int only_objectness);
 
-char *option_find_str(list *l, char *key, char *def);
+const char *option_find_str(list *l, const char *key, const char *def);
 int option_find_int(list *l, char *key, int def);
 
 network parse_network_cfg(const char *filename);
@@ -651,8 +651,8 @@ void zero_objectness(layer l);
 void get_region_boxes(layer l, int w, int h, int netw, int neth, float thresh, float **probs, box *boxes, float **masks, int only_objectness, int *map, float tree_thresh, int relative);
 void free_network(network net);
 void set_batch_network(network *net, int b);
-image load_image(char *filename, int w, int h, int c);
-image load_image_color(char *filename, int w, int h);
+image load_image(const char *filename, int w, int h, int c);
+image load_image_color(const char *filename, int w, int h);
 image make_image(int w, int h, int c);
 image resize_image(image im, int w, int h);
 image letterbox_image(image im, int w, int h);
@@ -703,7 +703,7 @@ int network_width(network *net);
 int network_height(network *net);
 float *network_predict_image(network *net, image im);
 
-char **get_labels(char *filename);
+char **get_labels(const char *filename);
 void do_nms_sort(box *boxes, float **probs, int total, int classes, float thresh);
 void do_nms_obj(box *boxes, float **probs, int total, int classes, float thresh);
 
@@ -734,7 +734,7 @@ void strip(char *s);
 float sec(clock_t clocks);
 void **list_to_array(list *l);
 void top_k(float *a, int n, int k, int *index);
-int *read_map(char *filename);
+int *read_map(const char *filename);
 void error(const char *s);
 int max_index(float *a, int n);
 int sample_array(float *a, int n);
