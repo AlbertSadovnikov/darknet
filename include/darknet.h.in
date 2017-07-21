@@ -5,15 +5,14 @@
 #include <string.h>
 #include <pthread.h>
 
-#ifdef __cplusplus
-extern "C"{
-#endif
-
-#define SECRET_NUM -1234
-extern int gpu_index;
+// Configured from cmake
+#cmakedefine GPU
+#cmakedefine CUDNN
+#cmakedefine OPENCV
+#cmakedefine OPENMP
 
 #ifdef GPU
-    #define BLOCK 512
+#define BLOCK 512
 
     #include "cuda_runtime.h"
     #include "curand.h"
@@ -24,8 +23,16 @@ extern int gpu_index;
     #endif
 #endif
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define SECRET_NUM -1234
+extern int gpu_index;
+
 #ifndef __cplusplus
-    #ifdef OPENCV
+#ifdef OPENCV
     #include "opencv2/highgui/highgui_c.h"
     #include "opencv2/imgproc/imgproc_c.h"
     #include "opencv2/core/version.hpp"
@@ -245,7 +252,7 @@ struct layer{
 
     float * m;
     float * v;
-    
+
     float * bias_m;
     float * bias_v;
     float * scale_m;
@@ -270,7 +277,7 @@ struct layer{
     float *g_cpu;
     float *o_cpu;
     float *c_cpu;
-    float *dc_cpu; 
+    float *dc_cpu;
 
     float * binary_input;
 
@@ -297,7 +304,7 @@ struct layer{
 
     struct layer *input_h_layer;
     struct layer *state_h_layer;
-	
+
     struct layer *wz;
     struct layer *uz;
     struct layer *wr;
@@ -337,7 +344,7 @@ struct layer{
     float *g_gpu;
     float *o_gpu;
     float *c_gpu;
-    float *dc_gpu; 
+    float *dc_gpu;
 
     float *m_gpu;
     float *v_gpu;
